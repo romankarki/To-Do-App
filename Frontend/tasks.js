@@ -1,8 +1,9 @@
-const d = document.querySelector("#not-logged");
 if (localStorage.getItem("auth_token")) {
-  d.innerHTML = "";
+  const l = document.querySelector("#log-in");
+  l.style.display = "none";
 } else {
-  d.innerHTML = "you are not logged in";
+  const d = document.querySelector("#log-out");
+  d.style.display = "none";
 }
 token = "token " + localStorage.getItem("auth_token");
 class Task {
@@ -20,6 +21,7 @@ class TaskUI {
     const list = document.querySelector("#list-items");
     const li = document.createElement("li");
     li.className = "list-group-item";
+    li.id = `${t.id}`;
     if (t.status === "Done") {
       li.innerHTML = `
         <p hidden>${t.id}</p>
@@ -28,7 +30,7 @@ class TaskUI {
           
             <p class="btn btn-success task-status"id="${t.id}">Done</p>
             &nbsp
-            <i class="edit-item fa fa-remove fa-2x"></i>
+            <i class="edit-item fa fa-remove fa-2x" ></i>
           </a>
           `;
     } else {
@@ -110,4 +112,29 @@ async function statusUpdate(data) {
   });
   const resData = await res.json();
   console.log(resData);
+}
+
+//logout user
+async function logoutUser() {
+  const res = await fetch("http://127.0.0.1:8000/token/logout/", {
+    headers: {
+      "Content-type": "application/json",
+      Authorization: token,
+    },
+  });
+  const resData = await res.json();
+  console.log(resData);
+}
+
+//make a delete request
+async function deleteTask(id) {
+  const res = await fetch(`http://127.0.0.1:8000/tasks/${id}/`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+  });
+  const resData = await res.json();
+  console.log(await resData);
 }
